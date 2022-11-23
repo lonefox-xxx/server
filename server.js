@@ -35,17 +35,17 @@ app.post('/order', (req, res) => {
         var tp = 0
         var sl = 0
         if (type == 'buy') {
-            tp = Math.floor(0.5 * price / 100 + price);
-            sl = Math.floor(1 * price / 100 - price);
+            tp = Math.abs(0.5 * price / 100 + price);
+            sl = Math.abs(1 * price / 100 - price);
         } else {
-            tp = Math.floor(0.5 * price / 100 - price);
-            sl = Math.floor(1 * price / 100 + price);
+            tp = Math.abs(0.5 * price / 100 - price);
+            sl = Math.abs(1 * price / 100 + price);
         };
 
         const tpsl = {
 
-            tp: tp,
-            sl: sl
+            tp: Math.floor(tp),
+            sl: Math.floor(sl)
         }
 
         return tpsl;
