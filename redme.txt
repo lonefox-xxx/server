@@ -1,0 +1,44 @@
+REQUEST EXAMPLES..............
+
+    // URL : http://soulfox-bot.herokuapp.com/price
+
+    // req parms = {
+    //     symbol : 'BTCUSDT',
+    //     interval: '1m',
+    //     from : Math.floor( new Date() / 1000 - 100)
+    // }
+
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    // URL  : http://soulfox-bot.herokuapp.com/send
+
+    // req parms = {
+        symbol : 'BTCUSDT',
+        price : '1687.93',
+        side : 'Buy'
+    }
+
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    // URL : http://soulfox-bot.herokuapp.com/order
+
+    // req parms = {
+        symbol: symbol,
+        price: price,
+        qty: 1,
+        side: side,
+        order_type: 'Limit',
+        time_in_force: 'GoodTillCancel',
+        base_price: req.body.price + 1000,
+        stop_px: req.body.price + 50,
+        close_on_trigger: false,
+        position_idx: 0
+    }
+    
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    // URL : http://soulfox-bot.herokuapp.com/walletbalance
+
+    // req parms = {
+        coin: 'USDT'
+    }
