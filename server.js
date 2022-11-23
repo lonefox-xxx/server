@@ -16,7 +16,7 @@ const client = new LinearClient({
 })
 
 app.use(bodyParser.json())
-app.listen(port, console.log(`renning on ${port}`))
+app.listen(port, console.log(`renning on {port}`))
 
 app.post('/price', (req, res) => {
     client.getIndexPriceKline(req.body)
@@ -30,7 +30,28 @@ app.post('/price', (req, res) => {
 
 app.post('/order', (req, res) => {
 
+    function get_tpsl(price, type) {
+
+        var tp = 0
+        var sl = 0
+        if (type == 'buy') {
+            tp = Math.Math.abs(0.5 * price / 100 + price);
+            sl = Math.abs(1 * price / 100 - price);
+        } else {
+            tp = Math.abs(0.5 * price / 100 - price);
+            sl = Math.abs(1 * price / 100 + price);
+        };
+
+        const tpsl = {
+
+            tp: tp,
+            sl: sl
+        }
+
+        return tpsl;
+    }
     const side = req.body.side
+    const ts = get_tpsl(req.body.price, side)
     const parms = {
         symbol: req.body.symbol,
         price: req.body.price,
@@ -38,6 +59,8 @@ app.post('/order', (req, res) => {
         side: side.charAt(0).toUpperCase() + side.slice(1),
         order_type: 'Limit',
         time_in_force: 'GoodTillCancel',
+        take_profit: ts.tp,
+        stop_loss: ts.sl,
         base_price: req.body.price - 1000,
         stop_px: req.body.price,
         close_on_trigger: false,
@@ -70,10 +93,10 @@ app.post('/walletbalance', (req, res) => {
 app.post('/sendlog', (req, res) => {
 
     const data = req.body;
-    const msg = `SIMBOL : ${data.symbol}\n\nTYPE : ${data.side}\n\n\QTY : ${data.qty}\n\nENTRY PRICE : ${data.price}\n\nTAKE PROFIT : ${data.take_profit}\n\n\STOP LOSE : ${data.stop_loss}\n\nID : ${data.stop_order_id}\n\n`;
+    const msg = `SIMBOL : {data.symbol}\n\nTYPE : {data.side}\n\n\QTY : {data.qty}\n\nENTRY PRICE : {data.price}\n\nTAKE PROFIT : {data.take_profit}\n\n\STOP LOSE : {data.stop_loss}\n\nID : {data.stop_order_id}\n\n`;
     (async () => {
 
-        await axios.get(`https://api.telegram.org/bot5129025740:AAF_asgA7Kbvxq-o3lqopFp7OfywA8KW8uU/sendMessage?chat_id=-1001592447140&text=${encodeURIComponent(msg)}`)
+        await axios.get(`https://api.telegram.org/bot5129025740:AAF_asgA7Kbvxq-o3lqopFp7OfywA8KW8uU/sendMessage?chat_id=-1001592447140&text={encodeURIComponent(msg)}`)
     })()
     res.send('ok')
 })
