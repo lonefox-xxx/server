@@ -39,7 +39,7 @@ app.post('/order', (req, res) => {
         order_type: 'Limit',
         time_in_force: 'GoodTillCancel',
         base_price: req.body.price - 1000,
-        stop_px: req.body.price - 50,
+        stop_px: req.body.price,
         close_on_trigger: false,
         reduce_only: false,
         position_idx: 0
