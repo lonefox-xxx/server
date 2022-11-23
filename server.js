@@ -16,7 +16,7 @@ const client = new LinearClient({
 })
 
 app.use(bodyParser.json())
-app.listen(port, console.log(`renning on {port}`))
+app.listen(port, console.log(`running on ${port}`))
 
 app.post('/price', (req, res) => {
     client.getIndexPriceKline(req.body)
@@ -61,19 +61,17 @@ app.post('/order', (req, res) => {
         time_in_force: 'GoodTillCancel',
         take_profit: ts.tp,
         stop_loss: ts.sl,
-        base_price: req.body.price - 1000,
-        stop_px: req.body.price,
         close_on_trigger: false,
         reduce_only: false,
         position_idx: 0
     };
 
-    client.placeConditionalOrder(parms).then((d) => {
+    client.placeActiveOrder(parms).then((d) => {
         console.log(d);
         res.send(d);
 
         (async () => {
-            await axios.post('https://soulfox-bot.herokuapp.com/sendlog', d.result)
+            await axios.post('http://localhost:3000/sendlog', d.result)
         })()
     })
 })
@@ -92,7 +90,7 @@ app.post('/walletbalance', (req, res) => {
 app.post('/sendlog', (req, res) => {
 
     const data = req.body;
-    const msg = `SIMBOL : ${data.symbol}\n\nTYPE : ${data.side}\n\n\QTY : ${data.qty}\n\nENTRY PRICE : ${data.price}\n\nTAKE PROFIT : ${data.take_profit}\n\n\STOP LOSE : ${data.stop_loss}\n\nID : ${data.stop_order_id}\n\n`;
+    const msg = `SIMBOL : ${data.symbol}\n\nTYPE : ${data.side}\n\n\QTY : ${data.qty}\n\nENTRY PRICE : ${data.price}\n\nTAKE PROFIT : ${data.take_profit}\n\n\STOP LOSE : ${data.stop_loss}\n\nID : ${data.order_id}\n\n`;
     (async () => {
 
         await axios.get(`https://api.telegram.org/bot5129025740:AAF_asgA7Kbvxq-o3lqopFp7OfywA8KW8uU/sendMessage?chat_id=-1001592447140&text=${encodeURIComponent(msg)}`)
