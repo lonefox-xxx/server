@@ -47,12 +47,12 @@ app.post('/order', (req, res) => {
 
     client.placeConditionalOrder(parms).then((d) => {
         console.log(d);
-        res.send(d)
+        res.send(d);
 
-            (async () => {
+        (async () => {
 
-                await axios.post('https://soulfox-bot.herokuapp.com/sendlog', d)
-            })()
+            await axios.post('https://soulfox-bot.herokuapp.com/sendlog', d.result)
+        })()
     })
 })
 
@@ -70,7 +70,7 @@ app.post('/walletbalance', (req, res) => {
 app.post('/sendlog', (req, res) => {
 
     const data = req.body;
-    const msg = `\n\n%20%20%20%20%20%20%20%20%20%20%20%20%20NEW TRADE OPENED\n\nSIMBOL : ${data.symbol}\n\nTYPE : ${data.side}\n\n\QTY : ${data.qty}\n\nENTRY PRICE : ${data.price}\n\nTAKE PROFIT : ${data.take_Profit}\n\n\STOP LOSE : ${data.stop_loss}\n\nID : ${data.order_id}\n\n`;
+    const msg = `SIMBOL : ${data.symbol}\n\nTYPE : ${data.side}\n\n\QTY : ${data.qty}\n\nENTRY PRICE : ${data.price}\n\nTAKE PROFIT : ${data.take_profit}\n\n\STOP LOSE : ${data.stop_loss}\n\nID : ${data.stop_order_id}\n\n`;
     (async () => {
 
         await axios.get(`https://api.telegram.org/bot5129025740:AAF_asgA7Kbvxq-o3lqopFp7OfywA8KW8uU/sendMessage?chat_id=-1001592447140&text=${encodeURIComponent(msg)}`)
