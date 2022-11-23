@@ -66,6 +66,8 @@ app.post('/order', (req, res) => {
         position_idx: 0
     };
 
+    console.log(parms);
+
     client.placeActiveOrder(parms).then((d) => {
         console.log(d);
         res.send(d);
