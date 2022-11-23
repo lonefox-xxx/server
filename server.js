@@ -38,8 +38,8 @@ app.post('/order', (req, res) => {
         side: side.charAt(0).toUpperCase() + side.slice(1),
         order_type: 'Limit',
         time_in_force: 'GoodTillCancel',
-        base_price: req.body.price + 1000,
-        stop_px: req.body.price + 50,
+        base_price: req.body.price - 1000,
+        stop_px: req.body.price - 50,
         close_on_trigger: false,
         reduce_only: false,
         position_idx: 0
