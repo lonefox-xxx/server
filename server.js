@@ -62,20 +62,20 @@ app.post('/order', (req, res) => {
         position_idx: 0
     };
 
-    client.placeActiveOrder(parms).then((d) => {
-        console.log(d);
-        res.send(d);
+    client.placeActiveOrder(parms).then(({ result }) => {
+        console.log(result);
+        res.send(result);
 
         (async () => {
-            await axios.post('https://soulfox-bot.herokuapp.com/sendlog', d.result)
+            await axios.post('https://soulfox-bot.herokuapp.com/sendlog', result)
         })()
     })
 })
 
 app.post('/walletbalance', (req, res) => {
     client.getWalletBalance(req.body)
-        .then((result) => {
-            const response = result.result
+        .then(({ result }) => {
+            const response = result
             res.send(response)
         })
         .catch(err => {
@@ -91,5 +91,9 @@ app.post('/sendlog', (req, res) => {
 
         await axios.get(`https://api.telegram.org/bot5129025740:AAF_asgA7Kbvxq-o3lqopFp7OfywA8KW8uU/sendMessage?chat_id=-1001592447140&text=${encodeURIComponent(msg)}`)
     })()
+        (async () => {
+
+            await axios.get("https://soulfox-bot-db.herokuapp.com/putdata", req.body)
+        })()
     res.send('ok')
 })
