@@ -74,7 +74,7 @@ app.post('/order', (req, res) => {
 
 app.post('/walletbalance', (req, res) => {
     client.getWalletBalance(req.body)
-        .then(({ result }) => {
+        .then((result) => {
             const response = result
             res.send(response)
         })
