@@ -31,7 +31,6 @@ app.post('/price', (req, res) => {
 app.post('/order', (req, res) => {
 
     function get_tpsl(price, type) {
-
         var tp = 0
         var sl = 0
         if (type == 'buy') {
@@ -41,13 +40,10 @@ app.post('/order', (req, res) => {
             tp = Math.abs(0.5 * price / 100 - price);
             sl = Math.abs(1 * price / 100 + price);
         };
-
         const tpsl = {
-
             tp: Math.floor(tp),
             sl: Math.floor(sl)
         }
-
         return tpsl;
     }
     const side = req.body.side
@@ -65,8 +61,6 @@ app.post('/order', (req, res) => {
         reduce_only: false,
         position_idx: 0
     };
-
-    console.log(parms);
 
     client.placeActiveOrder(parms).then((d) => {
         console.log(d);
