@@ -93,7 +93,7 @@ app.post('/sendlog', (req, res) => {
     })()
         (async () => {
 
-            await axios.get("https://soulfox-bot-db.herokuapp.com/putdata", req.body)
+            await axios.post("https://soulfox-bot-db.herokuapp.com/putdata", req.body)
         })()
     res.send('ok')
 })
