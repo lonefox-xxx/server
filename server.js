@@ -47,10 +47,11 @@ app.post('/order', (req, res) => {
         return tpsl;
     }
     const side = req.body.side
-    const ts = get_tpsl(req.body.price, side)
+    const price = req.body.price
+    const ts = get_tpsl(price, side)
     const parms = {
         symbol: req.body.symbol,
-        price: req.body.price,
+        price: price.toFixed(2),
         qty: 1,
         side: side.charAt(0).toUpperCase() + side.slice(1),
         order_type: 'Limit',
