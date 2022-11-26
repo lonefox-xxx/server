@@ -41,8 +41,8 @@ app.post('/order', (req, res) => {
             sl = Math.abs(1 * price / 100 + price);
         };
         const tpsl = {
-            tp: Math.floor(tp),
-            sl: Math.floor(sl)
+            tp: tp.toFixed(2),
+            sl: sl.toFixed(2)
         }
         return tpsl;
     }
