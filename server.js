@@ -39,8 +39,8 @@ app.get('/test', (req, res) => {
         per: 100
     }
     axios.post('http://tradefreanzy.epizy.com/QTY/qty.php', data)
-        .then(function (res) {
-            res.send(res.data)
+        .then(function ({ data }) {
+            res.send(data)
         })
 
 })
