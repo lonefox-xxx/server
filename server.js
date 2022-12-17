@@ -36,7 +36,7 @@ app.get('/test', (req, res) => {
     const symbol = 'BTCUSDT'
     const per = 100
     exec(`php my_script.php ${symbol} ${per}`, (e, data) => {
-        res.send(toString(data))
+        res.send(JSON(data))
     })
 
 })
