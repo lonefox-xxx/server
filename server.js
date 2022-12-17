@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
 })
 app.get('/test', (req, res) => {
     exec(`php my_script.php ${'BTCUSDT'} ${10}`).then((e, d) => {
-        res.send('ok')
+        res.send(d)
     })
 })
 
