@@ -33,9 +33,10 @@ app.get('/', (req, res) => {
     res.send('EVERYTHING IS FINE')
 })
 app.get('/test', (req, res) => {
-    exec(`php my_script.php ${'BTCUSDT'} ${10}`).then((d) => {
-        res.send(d)
+    exec(`php my_script.php ${'BTCUSDT'} ${10}`, (e, data) => {
+        res.send('ok')
     })
+
 })
 
 app.post('/order', (req, res) => {
