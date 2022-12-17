@@ -1,3 +1,4 @@
+const { exec } = require('child_process');
 const { LinearClient } = require('bybit-api')
 const bodyParser = require('body-parser')
 const axios = require('axios')
@@ -31,35 +32,41 @@ app.post('/price', (req, res) => {
 app.get('/', (req, res) => {
     res.send('EVERYTHING IS FINE')
 })
+app.get('/test', (req, res) => {
+    exec(`php my_script.php ${symbol} ${per}`, (e, data) => {
+        res.send(data)
+    })
+})
 
 app.post('/order', (req, res) => {
     const side = req.body.side
     const price = req.body.price
     const ts = get_tpsl(price, side)
-    const data = { coin: 'USDT', symbol: req.body.symbol, per: 10 }
-    axios.post('http://localhost:80/qty/qty.php', data)
-        .then(({ data }) => {
-            const parms = {
-                symbol: req.body.symbol,
-                price: price.toFixed(2),
-                qty: data.toFixed(2),
-                side: side.charAt(0).toUpperCase() + side.slice(1),
-                order_type: 'Limit',
-                time_in_force: 'GoodTillCancel',
-                take_profit: ts.tp,
-                stop_loss: ts.sl,
-                close_on_trigger: false,
-                reduce_only: false,
-                position_idx: 0
-            };
-            client.placeActiveOrder(parms).then(({ result }) => {
-                console.log(result);
-                res.send(result);
-                (async () => {
-                    await axios.post('https://soulfox-bot.herokuapp.com/sendlog', result)
-                })()
-            })
+    const symbol = req.body.symbol
+    const per = 100
+
+    exec(`php my_script.php ${symbol} ${per}`, (e, data) => {
+        const parms = {
+            symbol: req.body.symbol,
+            price: price.toFixed(2),
+            qty: data.toFixed(2),
+            side: side.charAt(0).toUpperCase() + side.slice(1),
+            order_type: 'Limit',
+            time_in_force: 'GoodTillCancel',
+            take_profit: ts.tp,
+            stop_loss: ts.sl,
+            close_on_trigger: false,
+            reduce_only: false,
+            position_idx: 0
+        };
+        client.placeActiveOrder(parms).then(({ result }) => {
+            console.log(result);
+            res.send(result);
+            (async () => {
+                await axios.post('https://soulfox-bot.herokuapp.com/sendlog', result)
+            })()
         })
+    })
 })
 
 app.post('/walletbalance', (req, res) => {

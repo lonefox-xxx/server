@@ -1,7 +1,7 @@
 node_modules/
 fun.php
 order.php
-Procfile
+Procfile/
 qty.php
 test.js
 test.php

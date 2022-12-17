@@ -14,8 +14,10 @@
     "axios": "^1.2.1",
     "body-parser": "^1.20.1",
     "bybit-api": "^3.3.5",
+    "child_process": "^1.0.2",
     "express": "^4.18.2",
     "http": "^0.0.1-security",
+    "php-node": "^0.0.2",
     "xmlhttprequest": "^1.8.0"
   }
 }
