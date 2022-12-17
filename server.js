@@ -33,11 +33,15 @@ app.get('/', (req, res) => {
     res.send('EVERYTHING IS FINE')
 })
 app.get('/test', (req, res) => {
-    const symbol = 'BTCUSDT'
-    const per = 100
-    exec(`php my_script.php ${symbol} ${per}`, (e, data) => {
-        console.log(data)
-    })
+    const data = {
+        coin: 'USDT',
+        symbol: 'BTCUSDT',
+        per: 100
+    }
+    axios.post('http://tradefreanzy.epizy.com/QTY/qty.php', data)
+        .then(function (res) {
+            res.send(res.data)
+        })
 
 })
 
