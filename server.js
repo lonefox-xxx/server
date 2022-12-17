@@ -28,49 +28,38 @@ app.post('/price', (req, res) => {
         });
 })
 
-app.post('/order', (req, res) => {
+app.get('/', (req, res) => {
+    res.send('EVERYTHING IS FINE')
+})
 
-    function get_tpsl(price, type) {
-        var tp = 0
-        var sl = 0
-        if (type == 'buy') {
-            tp = Math.abs(0.5 * price / 100 + price);
-            sl = Math.abs(1 * price / 100 - price);
-        } else {
-            tp = Math.abs(0.5 * price / 100 - price);
-            sl = Math.abs(1 * price / 100 + price);
-        };
-        const tpsl = {
-            tp: tp.toFixed(2),
-            sl: sl.toFixed(2)
-        }
-        return tpsl;
-    }
+app.post('/order', (req, res) => {
     const side = req.body.side
     const price = req.body.price
     const ts = get_tpsl(price, side)
-    const parms = {
-        symbol: req.body.symbol,
-        price: price.toFixed(2),
-        qty: 1,
-        side: side.charAt(0).toUpperCase() + side.slice(1),
-        order_type: 'Limit',
-        time_in_force: 'GoodTillCancel',
-        take_profit: ts.tp,
-        stop_loss: ts.sl,
-        close_on_trigger: false,
-        reduce_only: false,
-        position_idx: 0
-    };
-
-    client.placeActiveOrder(parms).then(({ result }) => {
-        console.log(result);
-        res.send(result);
-
-        (async () => {
-            await axios.post('https://soulfox-bot.herokuapp.com/sendlog', result)
-        })()
-    })
+    const data = { coin: 'USDT', symbol: req.body.symbol, per: 10 }
+    axios.post('http://localhost:80/qty/qty.php', data)
+        .then(({ data }) => {
+            const parms = {
+                symbol: req.body.symbol,
+                price: price.toFixed(2),
+                qty: data.toFixed(2),
+                side: side.charAt(0).toUpperCase() + side.slice(1),
+                order_type: 'Limit',
+                time_in_force: 'GoodTillCancel',
+                take_profit: ts.tp,
+                stop_loss: ts.sl,
+                close_on_trigger: false,
+                reduce_only: false,
+                position_idx: 0
+            };
+            client.placeActiveOrder(parms).then(({ result }) => {
+                console.log(result);
+                res.send(result);
+                (async () => {
+                    await axios.post('https://soulfox-bot.herokuapp.com/sendlog', result)
+                })()
+            })
+        })
 })
 
 app.post('/walletbalance', (req, res) => {
@@ -96,3 +85,20 @@ app.post('/sendlog', (req, res) => {
     })()
     res.send('ok')
 })
+
+const get_tpsl = (price, type) => {
+    var tp = 0
+    var sl = 0
+    if (type == 'buy') {
+        tp = Math.abs(0.5 * price / 100 + price);
+        sl = Math.abs(1 * price / 100 - price);
+    } else {
+        tp = Math.abs(0.5 * price / 100 - price);
+        sl = Math.abs(1 * price / 100 + price);
+    };
+    const tpsl = {
+        tp: tp.toFixed(2),
+        sl: sl.toFixed(2)
+    }
+    return tpsl;
+}
