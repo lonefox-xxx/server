@@ -32,7 +32,7 @@ app.post('/price', (req, res) => {
 app.get('/', (req, res) => {
     res.send('EVERYTHING IS FINE')
 })
-app.get('/test', (req, res) => {
+app.post('/test', (req, res) => {
     const data = {
         coin: 'USDT',
         symbol: 'BTCUSDT',

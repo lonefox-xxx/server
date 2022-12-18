@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button onclick="toggleFilter()">Toggle Filter</button>
+
+    <svg width="200" height="200">
+      <filter id="myFilter">
+        <feGaussianBlur stdDeviation="2" />
+      </filter>
+      <circle cx="100" cy="100" r="50" fill="blue" filter="url(#myFilter)" />
+    </svg>
+
+    <style>
+      svg circle {
+        filter: url(#myFilter);
+        transition: filter 1s;
+      }
+
+      svg circle:hover {
+        filter: url(#myFilter) brightness(200%);
+      }
+    </style>
+
+    <script>
+      function toggleFilter() {
+        const circle = document.querySelector("svg circle");
+        const currentFilter = circle.style.filter;
+        if (currentFilter === "none") {
+          circle.style.filter = "url(#myFilter)";
+        } else {
+          circle.style.filter = "none";
+        }
+      }
+    </script>
+  </body>
+</html>
