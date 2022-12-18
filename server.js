@@ -33,13 +33,16 @@ app.get('/', (req, res) => {
     res.send('EVERYTHING IS FINE')
 })
 app.post('/test', (req, res) => {
-    const symbol = 'BTCUSDT'
-    const per = 100
-    exec(`php my_script.php ${symbol} ${per}`, (e, data) => {
-        console.log(data)
-        res.send(data)
-        // res.send(data.data)
-    })
+    const data = {
+        coin: 'USDT',
+        symbol: 'BTCUSDT',
+        per: 100
+    }
+    axios.post('https://trdefrenzy.000webhostapp.com/QTY/qty.php', data)
+        .then(function ({ data }) {
+            console.log(data)
+            res.send(data)
+        })
 
 })
 
