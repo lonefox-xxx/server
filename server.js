@@ -41,6 +41,7 @@ app.post('/test', (req, res) => {
     axios.post('https://trdefrenzy.000webhostapp.com/QTY/qty.php', data)
         .then(function ({ data }) {
             console.log(data)
+            res.sendStatus(200)
             res.send(data)
         })
 
