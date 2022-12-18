@@ -42,7 +42,7 @@ app.post('/test', (req, res) => {
         .then(function ({ data }) {
             console.log(data)
             res.sendStatus(200)
-            res.send(data)
+            res.send(`${data}`)
         })
 
 })
