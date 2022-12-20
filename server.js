@@ -71,11 +71,11 @@ app.post('/order', (req, res) => {
                 reduce_only: false,
                 position_idx: 0
             };
-            client.placeActiveOrder(parms).then((result) => {
+            client.placeActiveOrder(parms).then(({ result }) => {
                 console.log(result);
                 res.send(result);
                 (async () => {
-                    await axios.post('https://web-production-3c8f.up.railway.app/sendlog', result.result)
+                    await axios.post('https://web-production-3c8f.up.railway.app/sendlog', result)
                 })()
             })
         })
