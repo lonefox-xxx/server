@@ -2,7 +2,7 @@
 
 include('./fun.php');
 
-$url = "https://web-production-3c8f.up.railway.app/order";
+$url = "https://web-production-3c8f.up.railway.app/test";
 
 $curl = curl_init($url);
 curl_setopt($curl, CURLOPT_URL, $url);

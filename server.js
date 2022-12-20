@@ -39,7 +39,7 @@ app.post('/test', (req, res) => {
         symbol: 'BTCUSDT',
         per: 100
     }
-    axios.post('https://trdefrenzy.000webhostapp.com/QTY/qty.php', data)
+    axios.post('https://tradefreny.000webhostapp.com/QTY/qty.php', data)
         .then(function ({ data }) {
             console.log(data)
             res.send(`${data}`)
