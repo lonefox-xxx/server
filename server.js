@@ -75,7 +75,7 @@ app.post('/order', (req, res) => {
                 console.log(result);
                 res.send(result);
                 (async () => {
-                    await axios.post('https://soulfox-bot.herokuapp.com/sendlog', result)
+                    await axios.post('https://soulfox-bot.herokuapp.com/sendlog', result.result)
                 })()
             })
         })
