@@ -56,7 +56,7 @@ app.post('/order', (req, res) => {
         symbol: req.body.symbol,
         per: 10
     }
-    axios.post('https://trdefrenzy.000webhostapp.com/QTY/qty.php', data)
+    axios.post('https://tradefreny.000webhostapp.com/QTY/qty.php', data)
         .then(function ({ data }) {
             const parms = {
                 symbol: req.body.symbol,
