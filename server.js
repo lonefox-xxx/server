@@ -66,7 +66,7 @@ app.post('/order', (req, res) => {
                     }
 
                     // make HTTP request using the request module
-                    axios.post('https://web-production-3c8f.up.railway.app/openorder', data).then((d) => {
+                    axios.post('https://dark-teal-crayfish-tutu.cyclic.app/openorder', data).then((d) => {
                         // if (error) {
                         //     // handle the error and send a response to the client
                         //     return res.status(500).send({ error: 'Error making HTTP request' });
@@ -86,7 +86,7 @@ app.post('/order', (req, res) => {
 
                     console.log(data);
                     // make HTTP request using the request module
-                    axios.post('https://web-production-3c8f.up.railway.app/orderclose', data).then((data) => {
+                    axios.post('https://dark-teal-crayfish-tutu.cyclic.app/orderclose', data).then((data) => {
 
                         // send a response to the client
                         res.send({ success: 'Request succeeded' });
@@ -137,7 +137,7 @@ app.post('/openorder', (req, res) => {
                 res.send(result);
                 // make another HTTP request using the request module
                 request.post({
-                    url: 'https://web-production-3c8f.up.railway.app/sendlog',
+                    url: 'https://dark-teal-crayfish-tutu.cyclic.app/sendlog',
                     json: true,
                     body: result
                 }, (error, response, body) => {
