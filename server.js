@@ -66,37 +66,31 @@ app.post('/order', (req, res) => {
                     }
 
                     // make HTTP request using the request module
-                    request.post({
-                        url: 'https://web-production-3c8f.up.railway.app/openorder',
-                        json: true,
-                        body: data
-                    }, (error, response, body) => {
-                        if (error) {
-                            // handle the error and send a response to the client
-                            return res.status(500).send({ error: 'Error making HTTP request' });
-                        }
+                    axios.post('https://web-production-3c8f.up.railway.app/openorder', data).then((d) => {
+                        // if (error) {
+                        //     // handle the error and send a response to the client
+                        //     return res.status(500).send({ error: 'Error making HTTP request' });
+                        // }
                         // send a response to the client
                         res.send({ success: 'Request succeeded' });
+                        console.log(d.data);
                     });
                 }
                 else if (type == 'close') {
                     const data = {
                         side: body.side,
                         id: body.symbol,
-                        price: body.price
+                        price: body.price,
+                        symbol: body.symbol
                     }
+
+                    console.log(data);
                     // make HTTP request using the request module
-                    request.post({
-                        url: 'https://web-production-3c8f.up.railway.app/orderclose',
-                        json: true,
-                        body: data
-                    }, (error, response, body) => {
-                        if (error) {
-                            // handle the error and send a response to the client
-                            return res.status(500).send({ error: 'Error making HTTP request' });
-                        }
+                    axios.post('https://web-production-3c8f.up.railway.app/orderclose', data).then((data) => {
+
                         // send a response to the client
                         res.send({ success: 'Request succeeded' });
+                        console.log(data);
                     });
                 } else {
                     // send a response to the client
@@ -110,7 +104,7 @@ app.post('/order', (req, res) => {
     }
 });
 
-app.post('/orderopen', (req, res) => {
+app.post('/openorder', (req, res) => {
     try {
         const side = req.body.side;
         const price = req.body.price;
@@ -163,10 +157,10 @@ app.post('/orderopen', (req, res) => {
 
 
 app.post('/orderclose', (req, res) => {
-    fs.readFile('test.json', (err, data) => {
+    fs.readFile('detials.json', (err, data) => {
 
-        const symbol = res.body.symbol
-        const side = res.body.side
+        const symbol = req.body.symbol
+        const side = req.body.side
         const price = req.body.price
 
         if (err) return
@@ -186,7 +180,7 @@ app.post('/orderclose', (req, res) => {
             position_idx: 0
         };
         client.placeActiveOrder(parms).then(({ result }) => {
-            console.log(result);
+            // console.log(result);
             res.send(result);
         });
         delete_record(symbol)
@@ -242,11 +236,11 @@ const get_tpsl = (price, type) => {
 }
 
 const add_recode = (arg) => {
-    const index = arg.intex
+    const index = arg.index
     const price = arg.price
     const qty = arg.qty
     const time = arg.time
-    fs.readFile('test.json', (err, data) => {
+    fs.readFile('detials.json', (err, data) => {
         if (err) return
         const jsonData = JSON.parse(data);
         const exesdata = jsonData.open_order_detials
@@ -258,26 +252,26 @@ const add_recode = (arg) => {
             }
         }
         const fdata = Object.assign({}, exesdata, newdata);
-        const filedata = fs.readFileSync('test.json');
+        const filedata = fs.readFileSync('detials.json');
         const obj = JSON.parse(filedata);
         obj.open_order_detials = fdata
         const json = JSON.stringify(obj);
-        fs.writeFileSync('test.json', json);
+        fs.writeFileSync('detials.json', json);
     })
 }
 
 const delete_record = (index) => {
-    fs.readFile('test.json', (err, data) => {
+    fs.readFile('detials.json', (err, data) => {
         if (err) return
         const jsonData = JSON.parse(data);
         const exesdata = jsonData.open_order_detials
         const newdata = { [`${index}`]: undefined }
         const fdata = Object.assign({}, exesdata, newdata);
-        const filedata = fs.readFileSync('test.json');
+        const filedata = fs.readFileSync('detials.json');
         const obj = JSON.parse(filedata);
         obj.open_order_detials = fdata
         const json = JSON.stringify(obj);
-        fs.writeFileSync('test.json', json);
+        fs.writeFileSync('detials.json', json);
     })
 }
 

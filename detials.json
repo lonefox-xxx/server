@@ -10,8 +10,8 @@
     "max_trade": null,
     "max-amo": null,
     "tradeble_coins": ["BTCUSDT", "TRXUSDT", "ADAUSDT", "SOLUSDT", "ETHUSDT"],
-    "stop_lose": 1.0,
-    "take_profit": 5.0
+    "stop_lose": 1,
+    "take_profit": 5
   },
   "open_order_detials": {}
 }
