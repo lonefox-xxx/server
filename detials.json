@@ -1,6 +1,6 @@
 {
   "main": {
-    "status": "on",
+    "status": "off",
     "sleep_until": 0,
     "use_testnet": true,
     "api_key": "MDwvCPqoZtIH8BsdmI",
