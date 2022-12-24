@@ -1,7 +1,7 @@
 {
   "main": {
     "status": "on",
-    "sleep_until": 0,
+    "sleep_until": null,
     "use_testnet": true,
     "api_key": "MDwvCPqoZtIH8BsdmI",
     "api_secret": "AS1pd69PboZA1IoxoID1qhi9IMnCOmyAoG14"
@@ -10,8 +10,11 @@
     "max_trade": null,
     "max-amo": null,
     "tradeble_coins": ["BTCUSDT", "TRXUSDT", "ADAUSDT", "SOLUSDT", "ETHUSDT"],
-    "stop_lose": 1.0,
-    "take_profit": 5.0
+    "stop_lose": 1,
+    "take_profit": 5
   },
-  "open_order_detials": {}
+  "open_order_detials": {
+    "btc": { "price": 8393, "qty": 88 },
+    "trx": { "price": 8393, "qty": 88 }
+  }
 }

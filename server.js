@@ -1,4 +1,6 @@
-const { exec } = require('child_process');
+const CryptoJS = require('crypto-js')
+const fs = require('fs');
+const request = require('request');
 const { LinearClient } = require('bybit-api')
 const bodyParser = require('body-parser')
 const axios = require('axios')
@@ -16,6 +18,7 @@ const client = new LinearClient({
     testnet: useTestnet
 })
 
+
 app.use(bodyParser.json())
 app.listen(port, console.log(`running on ${port}`))
 
@@ -29,39 +32,96 @@ app.post('/price', (req, res) => {
         });
 })
 
-app.get('/', (req, res) => {
+app.get('*', (req, res) => {
     res.send('EVERYTHING IS FINE')
 })
 
-app.post('/test', (req, res) => {
-    const data = {
-        coin: 'USDT',
-        symbol: 'BTCUSDT',
-        per: 100
-    }
-    axios.post('https://tradefreny.000webhostapp.com/QTY/qty.php', data)
-        .then(function ({ data }) {
-            console.log(data)
-            res.send(`${data}`)
-        })
 
-})
 
 app.post('/order', (req, res) => {
-    const side = req.body.side
-    const price = req.body.price
-    const ts = get_tpsl(price, side)
-    const data = {
-        coin: 'USDT',
-        symbol: req.body.symbol,
-        per: 10
+    try {
+        fs.readFile('detials.json', (err, data) => {
+            if (err) {
+                // handle the error and send a response to the client
+                return res.status(500).send({ error: 'Error reading JSON file' });
+            }
+
+            const jsonData = JSON.parse(data);
+            const main = jsonData.main
+            const status = main.status
+            const time = main.sleep_until
+            const nowtime = new Date / 1
+
+            if (status == "off" || time > nowtime) {
+                res.send('BOT IS SLEEPING')
+                return;
+            } else {
+                const body = req.body
+                const type = body.type
+                if (type == 'open') {
+                    const data = {
+                        symbol: body.symbol,
+                        side: body.side,
+                        price: body.price,
+                    }
+
+                    // make HTTP request using the request module
+                    request.post({
+                        url: 'https://web-production-3c8f.up.railway.app/openorder',
+                        json: true,
+                        body: data
+                    }, (error, response, body) => {
+                        if (error) {
+                            // handle the error and send a response to the client
+                            return res.status(500).send({ error: 'Error making HTTP request' });
+                        }
+                        // send a response to the client
+                        res.send({ success: 'Request succeeded' });
+                    });
+                }
+                else if (type == 'close') {
+                    const data = {
+                        side: body.side,
+                        id: body.symbol,
+                        price: body.price
+                    }
+                    // make HTTP request using the request module
+                    request.post({
+                        url: 'https://web-production-3c8f.up.railway.app/orderclose',
+                        json: true,
+                        body: data
+                    }, (error, response, body) => {
+                        if (error) {
+                            // handle the error and send a response to the client
+                            return res.status(500).send({ error: 'Error making HTTP request' });
+                        }
+                        // send a response to the client
+                        res.send({ success: 'Request succeeded' });
+                    });
+                } else {
+                    // send a response to the client
+                    res.send('sorry');
+                }
+            }
+        });
+    } catch (error) {
+        // handle the error and send a response to the client
+        return res.status(500).send({ error: 'An unexpected error occurred' });
     }
-    axios.post('https://tradefreny.000webhostapp.com/QTY/qty.php', data)
-        .then(function ({ data }) {
+});
+
+app.post('/orderopen', (req, res) => {
+    try {
+        const side = req.body.side;
+        const price = req.body.price;
+        const ts = get_tpsl(price, side);
+        // make HTTP request using the request module
+        get_qty(price, 10).then((qty) => {
+
             const parms = {
                 symbol: req.body.symbol,
                 price: price.toFixed(2),
-                qty: data.toFixed(2),
+                qty: qty,
                 side: side.charAt(0).toUpperCase() + side.slice(1),
                 order_type: 'Limit',
                 time_in_force: 'GoodTillCancel',
@@ -71,25 +131,87 @@ app.post('/order', (req, res) => {
                 reduce_only: false,
                 position_idx: 0
             };
+            const arg = {
+                index: req.body.symbol,
+                price: price.toFixed(2),
+                qty: qty,
+                time: new Date / 1
+            }
+            add_recode(arg)
             client.placeActiveOrder(parms).then(({ result }) => {
                 console.log(result);
                 res.send(result);
-                (async () => {
-                    await axios.post('https://web-production-3c8f.up.railway.app/sendlog', result)
-                })()
-            })
-        })
+                // make another HTTP request using the request module
+                request.post({
+                    url: 'https://web-production-3c8f.up.railway.app/sendlog',
+                    json: true,
+                    body: result
+                }, (error, response, body) => {
+                    if (error) {
+                        // handle the error
+                        console.error(error);
+                    }
+                });
+            });
+        });
+    } catch (error) {
+        // handle the error and send a response to the client
+        return res.status(500).send({ error: 'An unexpected error occurred' });
+    }
+
+});
+
+
+app.post('/orderclose', (req, res) => {
+    fs.readFile('test.json', (err, data) => {
+
+        const symbol = res.body.symbol
+        const side = res.body.side
+        const price = req.body.price
+
+        if (err) return
+        const jsonData = JSON.parse(data);
+        const exesdata = jsonData.open_order_detials[`${symbol}`]
+        const qty = exesdata.qty
+
+        const parms = {
+            symbol: symbol,
+            price: price,
+            qty: qty,
+            side: side.charAt(0).toUpperCase() + side.slice(1),
+            order_type: 'Limit',
+            time_in_force: 'GoodTillCancel',
+            close_on_trigger: false,
+            reduce_only: false,
+            position_idx: 0
+        };
+        client.placeActiveOrder(parms).then(({ result }) => {
+            console.log(result);
+            res.send(result);
+        });
+        delete_record(symbol)
+    });
 })
 
-app.post('/walletbalance', (req, res) => {
-    client.getWalletBalance(req.body)
-        .then((result) => {
-            const response = result
-            res.send(response)
-        })
-        .catch(err => {
-            res.send(err)
-        });
+app.post('/qty', (req, res) => {
+
+    const data = {
+        api_key: API_KEY,
+        coin: 'USDT',
+        timestamp: new Date / 1000,
+    }
+
+    const send_data = {
+        api_key: API_KEY,
+        coin: 'USDT',
+        timestamp: new Date / 1000,
+        sing: createSignedParams(API_SECRET, data)
+    }
+
+    axios.get('https://api-testnet.bybit.com/v2/private/wallet/balance', send_data).then((d) => {
+        console.log(d);
+    })
+
 })
 
 app.post('/sendlog', (req, res) => {
@@ -117,4 +239,62 @@ const get_tpsl = (price, type) => {
         sl: sl.toFixed(2)
     }
     return tpsl;
+}
+
+const add_recode = (arg) => {
+    const index = arg.intex
+    const price = arg.price
+    const qty = arg.qty
+    const time = arg.time
+    fs.readFile('test.json', (err, data) => {
+        if (err) return
+        const jsonData = JSON.parse(data);
+        const exesdata = jsonData.open_order_detials
+        const newdata = {
+            [`${index}`]: {
+                price: price,
+                qty: qty,
+                time: time
+            }
+        }
+        const fdata = Object.assign({}, exesdata, newdata);
+        const filedata = fs.readFileSync('test.json');
+        const obj = JSON.parse(filedata);
+        obj.open_order_detials = fdata
+        const json = JSON.stringify(obj);
+        fs.writeFileSync('test.json', json);
+    })
+}
+
+const delete_record = (index) => {
+    fs.readFile('test.json', (err, data) => {
+        if (err) return
+        const jsonData = JSON.parse(data);
+        const exesdata = jsonData.open_order_detials
+        const newdata = { [`${index}`]: undefined }
+        const fdata = Object.assign({}, exesdata, newdata);
+        const filedata = fs.readFileSync('test.json');
+        const obj = JSON.parse(filedata);
+        obj.open_order_detials = fdata
+        const json = JSON.stringify(obj);
+        fs.writeFileSync('test.json', json);
+    })
+}
+
+
+const createSignedParams = (data, secretKey) => {
+    const hash = CryptoJS.HmacSHA256(JSON.stringify(data), secretKey);
+    const base64Hash = CryptoJS.enc.Base64.stringify(hash);
+    return base64Hash
+};
+
+const get_qty = (price, per) => {
+
+    const data = client.getWalletBalance().then(({ result }) => {
+        const bal = result.USDT.available_balance
+        const amo = per * bal / 100
+        const qty = amo / price
+        return qty.toFixed(2)
+    })
+    return data
 }
