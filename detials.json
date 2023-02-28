@@ -1,17 +1,1 @@
-{
-  "main": {
-    "status": "on",
-    "sleep_until": 0,
-    "use_testnet": true,
-    "api_key": "MDwvCPqoZtIH8BsdmI",
-    "api_secret": "AS1pd69PboZA1IoxoID1qhi9IMnCOmyAoG14"
-  },
-  "trading_data": {
-    "max_trade": null,
-    "max-amo": null,
-    "tradeble_coins": ["BTCUSDT", "TRXUSDT", "ADAUSDT", "SOLUSDT", "ETHUSDT"],
-    "stop_lose": 1,
-    "take_profit": 5
-  },
-  "open_order_detials": {}
-}
+{"open_order_detials":{}}
